@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="DataModels.cs" />
     <Compile Include="IAccountEndpoint.cs" />
     <Compile Include="IAlbumEndpoint.cs" />
@@ -48,11 +45,44 @@
     <Compile Include="IMessageEndpoint.cs" />
     <Compile Include="ImgurException.cs" />
     <Compile Include="ImgurUri.cs" />
+    <Compile Include="Implementations\AccountEndpoint.cs" />
+    <Compile Include="Implementations\AlbumEndpoint.cs" />
+    <Compile Include="Implementations\AlbumOrImage.cs" />
+    <Compile Include="Implementations\AnonymousAuthenticator.cs" />
+    <Compile Include="Implementations\Basic.cs" />
+    <Compile Include="Implementations\BearerAuthenticator.cs" />
+    <Compile Include="Implementations\CommentEndpoint.cs" />
+    <Compile Include="Implementations\ErrorHelper.cs" />
+    <Compile Include="Implementations\ErrorResponse.cs" />
+    <Compile Include="Implementations\GalleryAlbumOrImage.cs" />
+    <Compile Include="Implementations\GalleryEndpoint.cs" />
+    <Compile Include="Implementations\ImageEndpoint.cs" />
+    <Compile Include="Implementations\Imgur.cs" />
+    <Compile Include="Implementations\ImgurApi.cs" />
+    <Compile Include="Implementations\ImgurApiBase.cs" />
+    <Compile Include="Implementations\MessageEndpoint.cs" />
+    <Compile Include="Implementations\NotificationEndpoint.cs" />
     <Compile Include="INotificationEndpoint.cs" />
     <Compile Include="OfflineException.cs" />
+    <Compile Include="Plumbing\IAuthenticator.cs" />
+    <Compile Include="Plumbing\IDeserializer.cs" />
+    <Compile Include="Plumbing\IRestClient.cs" />
+    <Compile Include="Plumbing\IRestRequest.cs" />
+    <Compile Include="Plumbing\JsonDeserializer.cs" />
+    <Compile Include="Plumbing\Method.cs" />
+    <Compile Include="Plumbing\RestClient.cs" />
+    <Compile Include="Plumbing\RestRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RateLimit.cs" />
     <Compile Include="Token.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
