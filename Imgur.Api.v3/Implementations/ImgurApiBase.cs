@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Net;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using RestSharp;
-using RestSharp.Deserializers;
 
 namespace Imgur.Api.v3.Implementations
 {
