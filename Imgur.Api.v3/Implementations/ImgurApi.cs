@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using Imgur.Api.v3.Json;
 using Imgur.Api.v3.Utilities;
 using Newtonsoft.Json;
 using RestSharp;
@@ -115,7 +116,10 @@ namespace Imgur.Api.v3.Implementations
                 {
                     UpdateRateLimits(response);
                     var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    var responseObject = JsonConvert.DeserializeObject<Basic<T>>(responseString);
+                    var responseObject = JsonConvert.DeserializeObject<Basic<T>>(responseString, new JsonSerializerSettings
+                    {
+                        ContractResolver = new UnderscoreMappingResolver()
+                    });
                     if (responseObject.Success)
                     {
                         return responseObject.Data;

@@ -64,6 +64,7 @@
     <Compile Include="Implementations\MessageEndpoint.cs" />
     <Compile Include="Implementations\NotificationEndpoint.cs" />
     <Compile Include="INotificationEndpoint.cs" />
+    <Compile Include="Json\UnderscoreMappingResolver.cs" />
     <Compile Include="OfflineException.cs" />
     <Compile Include="Utilities\HttpUtility.cs" />
     <Compile Include="Plumbing\IAuthenticator.cs" />
