@@ -12,7 +12,7 @@ namespace Imgur.Api.v3.Implementations
             _token = token;
         }
 
-        public void Authenticate(IRestClient client, IRestRequest request)
+        public void Authenticate(IRestRequest request)
         {
             request.AddHeader("Authorization", String.Format("Bearer {0}", _token.AccessToken));
         }

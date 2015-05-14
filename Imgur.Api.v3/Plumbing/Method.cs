@@ -4,7 +4,6 @@ using System.Net.Http;
 // ReSharper disable once CheckNamespace
 namespace RestSharp
 {
-    [Obsolete]
     public enum Method
     {
         // ReSharper disable InconsistentNaming

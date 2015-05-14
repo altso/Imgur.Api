@@ -11,7 +11,7 @@ using RestSharp;
 
 namespace Imgur.Api.v3.Implementations
 {
-    public class ImgurApi : ImgurApiBase, IImgurApi
+    public class ImgurApi : IImgurApi
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
@@ -20,6 +20,14 @@ namespace Imgur.Api.v3.Implementations
 
         private Token _token;
         private Task<Token> _refreshTask;
+
+        private readonly RateLimit _rateLimit = new RateLimit
+        {
+            ClientLimit = int.MaxValue,
+            ClientRemaining = int.MaxValue,
+            UserLimit = int.MaxValue,
+            UserRemaining = int.MaxValue
+        };
 
         public bool IsAuthorized
         {
@@ -83,7 +91,8 @@ namespace Imgur.Api.v3.Implementations
                 {
                     httpRequestMessage.Headers.Add(header.Key, header.Value);
                 }
-                // todo add authentication headers
+                var authenticator = authorize || IsAuthorized ? (IAuthenticator)new BearerAuthenticator(Token) : new AnonymousAuthenticator(_clientId);
+                authenticator.Authenticate(request);
                 var response = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
@@ -100,30 +109,6 @@ namespace Imgur.Api.v3.Implementations
                     Token.ExpiresIn = 0;
                     response.EnsureSuccessStatusCode();
                 }
-
-                //var client = new RestClient("https://api.imgur.com/3/");
-                //client.ClearHandlers();
-                //client.AddHandler("*", new JsonDeserializer());
-                //client.Authenticator = authorize || IsAuthorized ? (IAuthenticator)new BearerAuthenticator(Token) : new AnonymousAuthenticator(_clientId);
-                //try
-                //{
-                //    var response = await ExecuteAsync<Basic<T>>(client, request).ConfigureAwait(false);
-                //    Debug.WriteLine(RateLimit);
-                //    if (response.Success)
-                //    {
-                //        return response.Data;
-                //    }
-                //}
-                //catch (NotOkException e)
-                //{
-                //    if (e.StatusCode == HttpStatusCode.Forbidden)
-                //    {
-                //        Token.ExpiresIn = 0;
-                //        throw new OperationCanceledException();
-                //    }
-                //    throw;
-                //}
-                //throw new ImgurException("Imgur API returned non success status.");
             }
             throw new RateLimitExceededException();
         }
@@ -169,6 +154,11 @@ namespace Imgur.Api.v3.Implementations
         public IDictionary<string, object> State
         {
             get { return _state; }
+        }
+
+        public RateLimit RateLimit
+        {
+            get { return _rateLimit; }
         }
 
         protected virtual void OnTokenChanged()

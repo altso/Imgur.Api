@@ -5,7 +5,6 @@ using System.IO;
 // ReSharper disable once CheckNamespace
 namespace RestSharp
 {
-    [Obsolete]
     public interface IRestRequest
     {
         string Resource { get; set; }

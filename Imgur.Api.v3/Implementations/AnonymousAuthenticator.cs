@@ -12,7 +12,7 @@ namespace Imgur.Api.v3.Implementations
             _clientId = clientId;
         }
 
-        public void Authenticate(IRestClient client, IRestRequest request)
+        public void Authenticate(IRestRequest request)
         {
             request.AddHeader("Authorization", String.Format("Client-ID {0}", _clientId));
         }

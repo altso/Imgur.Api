@@ -5,7 +5,6 @@ using System.IO;
 // ReSharper disable once CheckNamespace
 namespace RestSharp
 {
-    [Obsolete]
     internal class RestRequest : IRestRequest
     {
         private readonly Lazy<IDictionary<string, string>> _urlSegments = new Lazy<IDictionary<string, string>>(() => new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
