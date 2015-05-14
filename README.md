@@ -1,4 +1,8 @@
 # Imgur.Api
+
+[![Build status](https://ci.appveyor.com/api/projects/status/mragkwunlh7l74be?svg=true)](https://ci.appveyor.com/project/altso/imgur-api)
+
+
 Yet another implementation of Imgur API v3 for .NET.
 
 It's a portable class library that targets:
