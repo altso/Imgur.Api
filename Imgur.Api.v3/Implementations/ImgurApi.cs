@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using Imgur.Api.v3.Utilities;
 using Newtonsoft.Json;
 using RestSharp;
@@ -85,17 +87,33 @@ namespace Imgur.Api.v3.Implementations
                 var httpRequestMessage = new HttpRequestMessage(request.Method.ToHttpMethod(), requestUri);
                 if (request.Parameters.Any())
                 {
-                    httpRequestMessage.Content = new FormUrlEncodedContent(request.Parameters.ToDictionary(kvp => kvp.Key, kvp => Convert.ToString(kvp.Value)));
+                    if (httpRequestMessage.Method == HttpMethod.Get)
+                    {
+                        var query = HttpUtility.ParseQueryString(requestUri.Query);
+                        foreach (var parameter in request.Parameters)
+                        {
+                            query.Add(parameter.Key, Convert.ToString(parameter.Value, CultureInfo.InvariantCulture));
+                        }
+                        var builder = new UriBuilder(requestUri);
+                        builder.Query = query.ToString();
+                        httpRequestMessage.RequestUri = builder.Uri;
+                    }
+                    else
+                    {
+                        var form = request.Parameters.ToDictionary(kvp => kvp.Key, kvp => Convert.ToString(kvp.Value, CultureInfo.InvariantCulture));
+                        httpRequestMessage.Content = new FormUrlEncodedContent(form);
+                    }
                 }
+                var authenticator = authorize || IsAuthorized ? (IAuthenticator)new BearerAuthenticator(Token) : new AnonymousAuthenticator(_clientId);
+                authenticator.Authenticate(httpRequestMessage);
                 foreach (var header in request.Headers)
                 {
                     httpRequestMessage.Headers.Add(header.Key, header.Value);
                 }
-                var authenticator = authorize || IsAuthorized ? (IAuthenticator)new BearerAuthenticator(Token) : new AnonymousAuthenticator(_clientId);
-                authenticator.Authenticate(request);
                 var response = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
+                    UpdateRateLimits(response);
                     var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var responseObject = JsonConvert.DeserializeObject<Basic<T>>(responseString);
                     if (responseObject.Success)
@@ -107,7 +125,7 @@ namespace Imgur.Api.v3.Implementations
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     Token.ExpiresIn = 0;
-                    response.EnsureSuccessStatusCode();
+                    throw new OperationCanceledException();
                 }
             }
             throw new RateLimitExceededException();
@@ -201,5 +219,37 @@ namespace Imgur.Api.v3.Implementations
             var responseString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<Token>(responseString);
         }
+
+        private void UpdateRateLimits(HttpResponseMessage response)
+        {
+            if (response.Headers == null || _rateLimit == null)
+            {
+                return;
+            }
+            foreach (var header in response.Headers)
+            {
+                if ("X-RateLimit-UserLimit".Equals(header.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    _rateLimit.UserLimit = Convert.ToInt32(header.Value.First());
+                }
+                else if ("X-RateLimit-UserRemaining".Equals(header.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    _rateLimit.UserRemaining = Convert.ToInt32(header.Value.First());
+                }
+                else if ("X-RateLimit-UserReset".Equals(header.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    _rateLimit.UserReset = Convert.ToInt32(header.Value.First());
+                }
+                else if ("X-RateLimit-ClientLimit".Equals(header.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    _rateLimit.ClientLimit = Convert.ToInt32(header.Value.First());
+                }
+                else if ("X-RateLimit-ClientRemaining".Equals(header.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    _rateLimit.ClientRemaining = Convert.ToInt32(header.Value.First());
+                }
+            }
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using RestSharp;
 
 namespace Imgur.Api.v3.Implementations
@@ -12,9 +13,9 @@ namespace Imgur.Api.v3.Implementations
             _token = token;
         }
 
-        public void Authenticate(IRestRequest request)
+        public void Authenticate(HttpRequestMessage request)
         {
-            request.AddHeader("Authorization", String.Format("Bearer {0}", _token.AccessToken));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token.AccessToken);
         }
     }
 }

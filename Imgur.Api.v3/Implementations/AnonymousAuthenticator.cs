@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using RestSharp;
 
 namespace Imgur.Api.v3.Implementations
@@ -12,9 +13,9 @@ namespace Imgur.Api.v3.Implementations
             _clientId = clientId;
         }
 
-        public void Authenticate(IRestRequest request)
+        public void Authenticate(HttpRequestMessage request)
         {
-            request.AddHeader("Authorization", String.Format("Client-ID {0}", _clientId));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Client-ID", _clientId);
         }
     }
 }
