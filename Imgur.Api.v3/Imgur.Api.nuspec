@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>1.0.0.0-alpha</version>
+    <title>Imgur API</title>
+    <authors>Alexander Tsoi</authors>
+    <owners>Alexander Tsoi</owners>
+    <projectUrl>https://github.com/altso/Imgur.Api</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.NET proxies for Imgur API</description>
+    <releaseNotes>Initial release</releaseNotes>
+    <copyright>Copyright 2015 Alexander Tsoi</copyright>
+    <tags>imgur api</tags>
+  </metadata>
+</package>
