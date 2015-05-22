@@ -10,6 +10,7 @@ namespace RestSharp
         private readonly Lazy<IDictionary<string, string>> _urlSegments = new Lazy<IDictionary<string, string>>(() => new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
         private readonly Lazy<IDictionary<string, object>> _parameters = new Lazy<IDictionary<string, object>>(() => new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
         private readonly Lazy<IDictionary<string, string>> _headers = new Lazy<IDictionary<string, string>>(() => new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
+        private readonly Lazy<IDictionary<string, File>> _files = new Lazy<IDictionary<string, File>>(() => new Dictionary<string, File>(StringComparer.OrdinalIgnoreCase));
 
         public RestRequest(string resource = null, Method method = Method.GET)
         {
@@ -36,6 +37,11 @@ namespace RestSharp
             get { return _headers.Value; }
         }
 
+        public IDictionary<string, File> Files
+        {
+            get { return _files.Value; }
+        }
+
         public IRestRequest AddUrlSegment(string name, string value)
         {
             UrlSegments[name] = value;
@@ -54,8 +60,13 @@ namespace RestSharp
             return this;
         }
 
-        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName)
+        public IRestRequest AddFile(string name, Stream stream, string fileName)
         {
+            Files[name] = new File
+            {
+                Stream = stream,
+                FileName = fileName
+            };
             return this;
         }
     }

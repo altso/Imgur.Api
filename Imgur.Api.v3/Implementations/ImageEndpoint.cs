@@ -58,29 +58,19 @@ namespace Imgur.Api.v3.Implementations
             return _imgurApi.ExecuteAsync<string>(new RestRequest("image/{id}/favorite", Method.POST).AddUrlSegment("id", id), true);
         }
 
-        public Task<Image> Upload(Stream image, string albumId, string name, string title, string description, IProgress<double> progress)
+        public async Task<Image> Upload(Stream image, string albumId, string name, string title, string description, IProgress<double> progress)
         {
             try
             {
                 var request = new RestRequest("image", Method.POST)
-                    .AddFile("image", writer =>
-                    {
-                        image.Seek(0L, SeekOrigin.Begin);
-                        var array = new byte[4096];
-                        int count, totalCount = 0;
-                        while ((count = image.Read(array, 0, array.Length)) != 0)
-                        {
-                            writer.Write(array, 0, count);
-                            totalCount += count;
-                            progress.Report(totalCount * 1d / image.Length);
-                            writer.Flush();
-                        }
-                    }, name)
+                    .AddFile("image", image, name)
                     .AddParameter("album", albumId)
                     .AddParameter("type", "file")
                     .AddParameter("title", title)
                     .AddParameter("description", description);
-                return _imgurApi.ExecuteAsync<Image>(request, false);
+                var response = await _imgurApi.ExecuteAsync<Image>(request, false);
+                progress.Report(1d);
+                return response;
             }
             finally
             {

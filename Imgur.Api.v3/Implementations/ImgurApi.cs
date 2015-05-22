@@ -89,33 +89,9 @@ namespace Imgur.Api.v3.Implementations
             if (RateLimit.ClientLimit > 0 && RateLimit.UserLimit > 0)
             {
                 var client = new HttpClient();
-                var requestUri = new Uri(new Uri("https://api.imgur.com/3/"), StringUtility.Format(request.Resource, request.UrlSegments));
-                var httpRequestMessage = new HttpRequestMessage(request.Method.ToHttpMethod(), requestUri);
-                if (request.Parameters.Any())
-                {
-                    if (httpRequestMessage.Method == HttpMethod.Get)
-                    {
-                        var query = HttpUtility.ParseQueryString(requestUri.Query);
-                        foreach (var parameter in request.Parameters)
-                        {
-                            query.Add(parameter.Key, Convert.ToString(parameter.Value, CultureInfo.InvariantCulture));
-                        }
-                        var builder = new UriBuilder(requestUri);
-                        builder.Query = query.ToString();
-                        httpRequestMessage.RequestUri = builder.Uri;
-                    }
-                    else
-                    {
-                        var form = request.Parameters.ToDictionary(kvp => kvp.Key, kvp => Convert.ToString(kvp.Value, CultureInfo.InvariantCulture));
-                        httpRequestMessage.Content = new FormUrlEncodedContent(form);
-                    }
-                }
+                var httpRequestMessage = request.ToHttpRequestMessage(new Uri("https://api.imgur.com/3/"));
                 var authenticator = authorize || IsAuthorized ? (IAuthenticator)new BearerAuthenticator(Token) : new AnonymousAuthenticator(_clientId);
                 authenticator.Authenticate(httpRequestMessage);
-                foreach (var header in request.Headers)
-                {
-                    httpRequestMessage.Headers.Add(header.Key, header.Value);
-                }
                 var response = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
@@ -125,13 +101,13 @@ namespace Imgur.Api.v3.Implementations
                     {
                         return responseObject.Data;
                     }
-                    throw new ImgurException("Imgur API returned non success status.");
                 }
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     Token.ExpiresIn = 0;
                     throw new OperationCanceledException();
                 }
+                throw new ImgurException("Imgur API returned non success status.");
             }
             throw new RateLimitExceededException();
         }
