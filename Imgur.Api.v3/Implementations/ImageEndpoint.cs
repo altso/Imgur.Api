@@ -62,6 +62,7 @@ namespace Imgur.Api.v3.Implementations
         {
             try
             {
+                image.Seek(0L, SeekOrigin.Begin);
                 var request = new RestRequest("image", Method.POST)
                     .AddFile("image", image, name)
                     .AddParameter("album", albumId)
