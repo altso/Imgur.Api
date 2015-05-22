@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,6 +21,10 @@ namespace Imgur.Api.v3.Implementations
         private readonly string _clientSecret;
         private readonly Func<Uri, Task<string>> _authorizer;
         private readonly IDictionary<string, object> _state = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        private readonly JsonSerializer _jsonSerializer = JsonSerializer.CreateDefault(new JsonSerializerSettings
+        {
+            ContractResolver = new UnderscoreMappingResolver()
+        });
 
         private Token _token;
         private Task<Token> _refreshTask;
@@ -115,11 +120,7 @@ namespace Imgur.Api.v3.Implementations
                 if (response.IsSuccessStatusCode)
                 {
                     UpdateRateLimits(response);
-                    var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    var responseObject = JsonConvert.DeserializeObject<Basic<T>>(responseString, new JsonSerializerSettings
-                    {
-                        ContractResolver = new UnderscoreMappingResolver()
-                    });
+                    var responseObject = await Deserialize<Basic<T>>(response.Content).ConfigureAwait(false);
                     if (responseObject.Success)
                     {
                         return responseObject.Data;
@@ -151,8 +152,7 @@ namespace Imgur.Api.v3.Implementations
                     { "grant_type", "authorization_code" },
                     { "code", code }
                 })).ConfigureAwait(false);
-                var responseString = await response.Content.ReadAsStringAsync();
-                var token = JsonConvert.DeserializeObject<Token>(responseString);
+                var token = await Deserialize<Token>(response.Content).ConfigureAwait(false);
 
                 Token = await Refresh(token.RefreshToken, _clientId, _clientSecret).ConfigureAwait(false); // get account username
             }
@@ -220,8 +220,7 @@ namespace Imgur.Api.v3.Implementations
                 { "client_secret", clientSecret },
                 { "grant_type", "refresh_token" }
             })).ConfigureAwait(false);
-            var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Token>(responseString);
+            return await Deserialize<Token>(response.Content).ConfigureAwait(false);
         }
 
         private void UpdateRateLimits(HttpResponseMessage response)
@@ -255,5 +254,10 @@ namespace Imgur.Api.v3.Implementations
             }
         }
 
+        private async Task<T> Deserialize<T>(HttpContent content)
+        {
+            var responseString = await content.ReadAsStringAsync().ConfigureAwait(false);
+            return _jsonSerializer.Deserialize<T>(new JsonTextReader(new StringReader(responseString)));
+        }
     }
 }
