@@ -1,8 +1,6 @@
-﻿
-using System.Net.Http;
+﻿using System.Net.Http;
 
-// ReSharper disable once CheckNamespace
-namespace RestSharp
+namespace Imgur.Api.v3.Http
 {
     internal interface IAuthenticator
     {

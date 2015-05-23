@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using RestSharp;
+using Imgur.Api.v3.Http;
 
 namespace Imgur.Api.v3.Implementations
 {

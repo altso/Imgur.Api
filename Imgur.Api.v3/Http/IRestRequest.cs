@@ -6,8 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using Imgur.Api.v3.Utilities;
 
-// ReSharper disable once CheckNamespace
-namespace RestSharp
+namespace Imgur.Api.v3.Http
 {
     public interface IRestRequest
     {
@@ -29,7 +28,7 @@ namespace RestSharp
         public string FileName { get; set; }
     }
 
-    public static class RestRequestExtensions
+    internal static class RestRequestExtensions
     {
         public static HttpRequestMessage ToHttpRequestMessage(this IRestRequest request, Uri baseUri)
         {

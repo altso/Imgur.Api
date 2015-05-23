@@ -1,9 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json.Serialization;
 
-namespace Imgur.Api.v3.Json
+namespace Imgur.Api.v3.Http
 {
-    public class UnderscoreMappingResolver : DefaultContractResolver
+    internal class UnderscoreMappingResolver : DefaultContractResolver
     {
         protected override string ResolvePropertyName(string propertyName)
         {

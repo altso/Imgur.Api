@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Imgur.Api.v3.Utilities
 {
-    public class StringUtility
+    internal class StringUtility
     {
         private static readonly Regex RePattern = new Regex(@"(\{+)([^\}]+)(\}+)");
 

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using RestSharp;
+using Imgur.Api.v3.Http;
 
 namespace Imgur.Api.v3.Implementations
 {

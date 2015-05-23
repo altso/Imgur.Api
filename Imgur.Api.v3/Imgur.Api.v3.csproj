@@ -64,12 +64,12 @@
     <Compile Include="Implementations\MessageEndpoint.cs" />
     <Compile Include="Implementations\NotificationEndpoint.cs" />
     <Compile Include="INotificationEndpoint.cs" />
-    <Compile Include="Json\UnderscoreMappingResolver.cs" />
+    <Compile Include="Http\UnderscoreMappingResolver.cs" />
     <Compile Include="OfflineException.cs" />
-    <Compile Include="Plumbing\IAuthenticator.cs" />
-    <Compile Include="Plumbing\IRestRequest.cs" />
-    <Compile Include="Plumbing\Method.cs" />
-    <Compile Include="Plumbing\RestRequest.cs" />
+    <Compile Include="Http\IAuthenticator.cs" />
+    <Compile Include="Http\IRestRequest.cs" />
+    <Compile Include="Http\Method.cs" />
+    <Compile Include="Http\RestRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RateLimit.cs" />
     <Compile Include="Token.cs" />

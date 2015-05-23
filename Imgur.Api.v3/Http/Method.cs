@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-// ReSharper disable once CheckNamespace
-namespace RestSharp
+namespace Imgur.Api.v3.Http
 {
     public enum Method
     {

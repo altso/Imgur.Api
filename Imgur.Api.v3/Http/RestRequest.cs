@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-// ReSharper disable once CheckNamespace
-namespace RestSharp
+namespace Imgur.Api.v3.Http
 {
     internal class RestRequest : IRestRequest
     {

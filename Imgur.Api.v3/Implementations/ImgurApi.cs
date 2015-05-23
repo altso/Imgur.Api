@@ -7,9 +7,8 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Handlers;
 using System.Threading.Tasks;
-using Imgur.Api.v3.Json;
+using Imgur.Api.v3.Http;
 using Newtonsoft.Json;
-using RestSharp;
 
 namespace Imgur.Api.v3.Implementations
 {
