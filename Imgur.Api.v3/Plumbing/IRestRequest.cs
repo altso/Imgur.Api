@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Web;
 using Imgur.Api.v3.Utilities;
 
 // ReSharper disable once CheckNamespace
@@ -54,13 +53,12 @@ namespace RestSharp
             {
                 if (httpRequestMessage.Method == HttpMethod.Get)
                 {
-                    var query = HttpUtility.ParseQueryString(requestUri.Query);
+                    var query = requestUri.ParseQueryString();
                     foreach (var parameter in request.Parameters)
                     {
                         query.Add(parameter.Key, Convert.ToString(parameter.Value, CultureInfo.InvariantCulture));
                     }
-                    var builder = new UriBuilder(requestUri);
-                    builder.Query = query.ToString();
+                    var builder = new UriBuilder(requestUri) { Query = query.ToString() };
                     httpRequestMessage.RequestUri = builder.Uri;
                 }
                 else
