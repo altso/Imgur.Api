@@ -69,8 +69,7 @@ namespace Imgur.Api.v3.Implementations
                     .AddParameter("type", "file")
                     .AddParameter("title", title)
                     .AddParameter("description", description);
-                var response = await _imgurApi.ExecuteAsync<Image>(request, false);
-                progress.Report(1d);
+                var response = await _imgurApi.ExecuteAsync<Image>(request, false, progress);
                 return response;
             }
             finally

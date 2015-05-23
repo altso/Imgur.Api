@@ -10,7 +10,7 @@ namespace Imgur.Api.v3
         RateLimit RateLimit { get; }
         bool IsAuthorized { get; }
         Token Token { get; }
-        Task<T> ExecuteAsync<T>(IRestRequest request, bool authorize);
+        Task<T> ExecuteAsync<T>(IRestRequest request, bool authorize, IProgress<double> requestProgress = null);
         Task Authorize();
         Task SignOut();
         event EventHandler TokenChanged;

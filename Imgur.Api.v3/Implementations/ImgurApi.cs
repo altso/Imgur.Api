@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Handlers;
 using System.Threading.Tasks;
-using System.Web;
 using Imgur.Api.v3.Json;
-using Imgur.Api.v3.Utilities;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -64,7 +62,7 @@ namespace Imgur.Api.v3.Implementations
             _token = token;
         }
 
-        public async Task<T> ExecuteAsync<T>(IRestRequest request, bool authorize)
+        public async Task<T> ExecuteAsync<T>(IRestRequest request, bool authorize, IProgress<double> requestProgress)
         {
             if (authorize)
             {
@@ -88,7 +86,18 @@ namespace Imgur.Api.v3.Implementations
 
             if (RateLimit.ClientLimit > 0 && RateLimit.UserLimit > 0)
             {
-                var client = new HttpClient();
+                HttpMessageHandler handler = new HttpClientHandler();
+                if (requestProgress != null)
+                {
+                    var progressHandler = new ProgressMessageHandler(handler);
+                    progressHandler.HttpSendProgress += (sender, args) =>
+                    {
+                        requestProgress.Report(args.ProgressPercentage / 100d);
+                    };
+                    handler = progressHandler;
+                }
+                HttpClient client = new HttpClient(handler);
+
                 var httpRequestMessage = request.ToHttpRequestMessage(new Uri("https://api.imgur.com/3/"));
                 var authenticator = authorize || IsAuthorized ? (IAuthenticator)new BearerAuthenticator(Token) : new AnonymousAuthenticator(_clientId);
                 authenticator.Authenticate(httpRequestMessage);
