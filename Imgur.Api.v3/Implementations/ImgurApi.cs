@@ -105,12 +105,7 @@ namespace Imgur.Api.v3.Implementations
                 }
                 var client = new HttpClient(handler);
 
-                var httpRequestMessage = request.ToHttpRequestMessage(new Uri("https://api.imgur.com/3/"));
-                httpRequestMessage.Headers.Authorization = authorize || IsAuthorized
-                    ? new AuthenticationHeaderValue("Bearer", _token.AccessToken)
-                    : new AuthenticationHeaderValue("Client-ID", _clientId);
-
-                var response = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+                var response = await SendRequestAsync(request, authorize, client).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
                     UpdateRateLimits(response);
@@ -120,14 +115,39 @@ namespace Imgur.Api.v3.Implementations
                         return responseObject.Data;
                     }
                 }
+                throw new ImgurException("Imgur API returned non success status.");
+            }
+            throw new RateLimitExceededException();
+        }
+
+        private async Task<HttpResponseMessage> SendRequestAsync(IRestRequest request, bool authorize, HttpClient client)
+        {
+            HttpResponseMessage response = null;
+            for (int i = 0; i < 3; i++)
+            {
+                var httpRequestMessage = CreateRequest(request, authorize);
+                response = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     Token.ExpiresIn = 0;
                     throw new OperationCanceledException();
                 }
-                throw new ImgurException("Imgur API returned non success status.");
             }
-            throw new RateLimitExceededException();
+            return response;
+        }
+
+        private HttpRequestMessage CreateRequest(IRestRequest request, bool authorize)
+        {
+            var httpRequestMessage = request.ToHttpRequestMessage(new Uri("https://api.imgur.com/3/"));
+            httpRequestMessage.Headers.Authorization = authorize || IsAuthorized
+                ? new AuthenticationHeaderValue("Bearer", _token.AccessToken)
+                : new AuthenticationHeaderValue("Client-ID", _clientId);
+            return httpRequestMessage;
         }
 
         public async Task Authorize()

@@ -39,6 +39,7 @@ namespace Imgur.Api.v3.Http
                 var formDataContent = new MultipartFormDataContent();
                 foreach (var file in request.Files)
                 {
+                    file.Value.Stream.Seek(0L, SeekOrigin.Begin);
                     formDataContent.Add(new StreamContent(file.Value.Stream), file.Key, file.Value.FileName);
                 }
                 foreach (var parameter in request.Parameters)
