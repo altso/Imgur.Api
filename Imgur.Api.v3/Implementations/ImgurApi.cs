@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Handlers;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Imgur.Api.v3.Http;
 using Newtonsoft.Json;
@@ -102,11 +103,13 @@ namespace Imgur.Api.v3.Implementations
                     };
                     handler = progressHandler;
                 }
-                HttpClient client = new HttpClient(handler);
+                var client = new HttpClient(handler);
 
                 var httpRequestMessage = request.ToHttpRequestMessage(new Uri("https://api.imgur.com/3/"));
-                var authenticator = authorize || IsAuthorized ? (IAuthenticator)new BearerAuthenticator(Token) : new AnonymousAuthenticator(_clientId);
-                authenticator.Authenticate(httpRequestMessage);
+                httpRequestMessage.Headers.Authorization = authorize || IsAuthorized
+                    ? new AuthenticationHeaderValue("Bearer", _token.AccessToken)
+                    : new AuthenticationHeaderValue("Client-ID", _clientId);
+
                 var response = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {

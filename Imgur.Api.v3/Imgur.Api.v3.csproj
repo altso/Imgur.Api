@@ -50,9 +50,7 @@
     <Compile Include="Implementations\AccountEndpoint.cs" />
     <Compile Include="Implementations\AlbumEndpoint.cs" />
     <Compile Include="Implementations\AlbumOrImage.cs" />
-    <Compile Include="Implementations\AnonymousAuthenticator.cs" />
     <Compile Include="Implementations\Basic.cs" />
-    <Compile Include="Implementations\BearerAuthenticator.cs" />
     <Compile Include="Implementations\CommentEndpoint.cs" />
     <Compile Include="Implementations\ErrorHelper.cs" />
     <Compile Include="Implementations\ErrorResponse.cs" />
@@ -66,7 +64,6 @@
     <Compile Include="INotificationEndpoint.cs" />
     <Compile Include="Http\UnderscoreMappingResolver.cs" />
     <Compile Include="OfflineException.cs" />
-    <Compile Include="Http\IAuthenticator.cs" />
     <Compile Include="Http\IRestRequest.cs" />
     <Compile Include="Http\Method.cs" />
     <Compile Include="Http\RestRequest.cs" />
