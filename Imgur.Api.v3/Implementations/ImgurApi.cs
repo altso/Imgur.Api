@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Imgur.Api.v3.Implementations
 {
-    public class ImgurApi : IImgurApi
+    public class ImgurApi : IImgurApi, IExecutor
     {
         private readonly string _clientId;
         private readonly string _clientSecret;

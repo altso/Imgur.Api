@@ -5,16 +5,16 @@ namespace Imgur.Api.v3.Implementations
 {
     public class CommentEndpoint : ICommentEndpoint
     {
-        private readonly IImgurApi _imgurApi;
+        private readonly IExecutor _executor;
 
-        public CommentEndpoint(IImgurApi imgurApi)
+        public CommentEndpoint(IExecutor executor)
         {
-            _imgurApi = imgurApi;
+            _executor = executor;
         }
 
         public async Task Vote(string id, string vote)
         {
-            await _imgurApi.ExecuteAsync<bool>(
+            await _executor.ExecuteAsync<bool>(
                 new RestRequest("comment/{id}/vote/{vote}", Method.POST)
                     .AddUrlSegment("id", id)
                     .AddUrlSegment("vote", vote),
@@ -23,7 +23,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<string> Create(string imageId, string comment, string parentId)
         {
-            var result = await _imgurApi.ExecuteAsync<CommentItem>(
+            var result = await _executor.ExecuteAsync<CommentItem>(
                 new RestRequest("comment", Method.POST)
                     .AddParameter("image_id", imageId)
                     .AddParameter("comment", comment)
@@ -38,7 +38,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<CommentItem> Get(string id)
         {
-            var result = await _imgurApi.ExecuteAsync<CommentItem>(
+            var result = await _executor.ExecuteAsync<CommentItem>(
                 new RestRequest("comment/{id}")
                     .AddUrlSegment("id", id),
                 true).ConfigureAwait(false);

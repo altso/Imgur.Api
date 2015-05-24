@@ -7,16 +7,16 @@ namespace Imgur.Api.v3.Implementations
 {
     public class AlbumEndpoint : IAlbumEndpoint
     {
-        private readonly IImgurApi _imgurApi;
+        private readonly IExecutor _executor;
 
-        public AlbumEndpoint(IImgurApi imgurApi)
+        public AlbumEndpoint(IExecutor executor)
         {
-            _imgurApi = imgurApi;
+            _executor = executor;
         }
 
         public Task<Album> Get(string id)
         {
-            return _imgurApi.ExecuteAsync<Album>(
+            return _executor.ExecuteAsync<Album>(
                 new RestRequest("album/{id}")
                     .AddUrlSegment("id", id),
                 false);
@@ -35,7 +35,7 @@ namespace Imgur.Api.v3.Implementations
                 {
                     request.AddParameter("ids", string.Join(",", ids));
                 }
-                return _imgurApi.ExecuteAsync<bool>(request, false);
+                return _executor.ExecuteAsync<bool>(request, false);
             }
             finally
             {
@@ -47,7 +47,7 @@ namespace Imgur.Api.v3.Implementations
         {
             try
             {
-                return _imgurApi.ExecuteAsync<bool>(new RestRequest("album/{id}", Method.DELETE).AddUrlSegment("id", id), false);
+                return _executor.ExecuteAsync<bool>(new RestRequest("album/{id}", Method.DELETE).AddUrlSegment("id", id), false);
             }
             finally
             {
@@ -57,7 +57,7 @@ namespace Imgur.Api.v3.Implementations
 
         public Task<string> Favorite(string id)
         {
-            return _imgurApi.ExecuteAsync<string>(
+            return _executor.ExecuteAsync<string>(
                 new RestRequest("album/{id}/favorite", Method.POST)
                     .AddUrlSegment("id", id),
                 true);
@@ -67,7 +67,7 @@ namespace Imgur.Api.v3.Implementations
         {
             try
             {
-                return _imgurApi.ExecuteAsync<Album>(new RestRequest("album", Method.POST)
+                return _executor.ExecuteAsync<Album>(new RestRequest("album", Method.POST)
                     .AddParameter("ids", string.Join(",", ids))
                     .AddParameter("title", title)
                     .AddParameter("description", description)
@@ -82,13 +82,13 @@ namespace Imgur.Api.v3.Implementations
         private void IncrementVersion()
         {
             object version;
-            if (_imgurApi.State.TryGetValue("album", out version))
+            if (_executor.State.TryGetValue("album", out version))
             {
-                _imgurApi.State["album"] = Convert.ToInt32(version) + 1;
+                _executor.State["album"] = Convert.ToInt32(version) + 1;
             }
             else
             {
-                _imgurApi.State["album"] = 0;
+                _executor.State["album"] = 0;
             }
         }
     }

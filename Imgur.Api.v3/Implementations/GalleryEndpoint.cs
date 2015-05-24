@@ -9,16 +9,16 @@ namespace Imgur.Api.v3.Implementations
 {
     public class GalleryEndpoint : IGalleryEndpoint
     {
-        private readonly IImgurApi _api;
+        private readonly IExecutor _executor;
 
-        public GalleryEndpoint(IImgurApi api)
+        public GalleryEndpoint(IExecutor executor)
         {
-            _api = api;
+            _executor = executor;
         }
 
         public async Task<IEnumerable<GalleryItem>> GetGallery(GallerySection section, GallerySort sort, GalleryWindow window, int page, bool showViral)
         {
-            var items = await _api.ExecuteAsync<List<GalleryAlbumOrImage>>(
+            var items = await _executor.ExecuteAsync<List<GalleryAlbumOrImage>>(
                 new RestRequest("gallery/{section}/{sort}/{window}/{page}")
                     .AddUrlSegment("section", section.ToString().ToLowerInvariant())
                     .AddUrlSegment("sort", sort.ToString().ToLowerInvariant())
@@ -31,7 +31,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<IEnumerable<GalleryItem>> GetRandom(int page)
         {
-            var items = await _api.ExecuteAsync<List<GalleryAlbumOrImage>>(
+            var items = await _executor.ExecuteAsync<List<GalleryAlbumOrImage>>(
                 new RestRequest("gallery/random/random/{page}")
                     .AddUrlSegment("page", page.ToString(CultureInfo.InvariantCulture)),
                 false).ConfigureAwait(false);
@@ -40,7 +40,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<IEnumerable<GalleryItem>> Search(string q)
         {
-            var items = await _api.ExecuteAsync<List<GalleryAlbumOrImage>>(
+            var items = await _executor.ExecuteAsync<List<GalleryAlbumOrImage>>(
                 new RestRequest("gallery/search")
                     .AddParameter("q", q),
                 false).ConfigureAwait(false);
@@ -53,7 +53,7 @@ namespace Imgur.Api.v3.Implementations
             {
                 subreddit = subreddit + "/";
             }
-            var items = await _api.ExecuteAsync<List<GalleryAlbumOrImage>>(
+            var items = await _executor.ExecuteAsync<List<GalleryAlbumOrImage>>(
                 new RestRequest(string.Format("gallery{0}{{sort}}/{{window}}/{{page}}", subreddit))
                     .AddUrlSegment("sort", sort.ToString().ToLowerInvariant())
                     .AddUrlSegment("window", window.ToString().ToLowerInvariant())
@@ -64,19 +64,19 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<GalleryItem> GetItem(string id)
         {
-            var item = await _api.ExecuteAsync<GalleryAlbumOrImage>(new RestRequest("gallery/{id}").AddUrlSegment("id", id), false).ConfigureAwait(false);
+            var item = await _executor.ExecuteAsync<GalleryAlbumOrImage>(new RestRequest("gallery/{id}").AddUrlSegment("id", id), false).ConfigureAwait(false);
             return item.ToGalleryItem();
         }
 
         public async Task<GalleryImage> GetImage(string id)
         {
-            var item = await _api.ExecuteAsync<GalleryImage>(new RestRequest("gallery/image/{id}").AddUrlSegment("id", id), false).ConfigureAwait(false);
+            var item = await _executor.ExecuteAsync<GalleryImage>(new RestRequest("gallery/image/{id}").AddUrlSegment("id", id), false).ConfigureAwait(false);
             return item;
         }
 
         public async Task<GalleryAlbum> GetAlbum(string id)
         {
-            return await _api.ExecuteAsync<GalleryAlbum>(
+            return await _executor.ExecuteAsync<GalleryAlbum>(
                 new RestRequest("gallery/album/{id}")
                     .AddUrlSegment("id", id),
                 false).ConfigureAwait(false);
@@ -84,7 +84,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<GalleryItem> GetSubredditItem(string subreddit, string id)
         {
-            var item = await _api.ExecuteAsync<GalleryAlbumOrImage>(
+            var item = await _executor.ExecuteAsync<GalleryAlbumOrImage>(
                 new RestRequest("gallery{subreddit}{id}")
                     .AddUrlSegment("subreddit", subreddit)
                     .AddUrlSegment("id", id), false)
@@ -94,7 +94,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<IEnumerable<CommentItem>> GetComments(string id)
         {
-            return await _api.ExecuteAsync<List<CommentItem>>(
+            return await _executor.ExecuteAsync<List<CommentItem>>(
                 new RestRequest("gallery/{id}/comments")
                     .AddUrlSegment("id", id),
                 false).ConfigureAwait(false);
@@ -102,7 +102,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task Vote(string id, string vote)
         {
-            await _api.ExecuteAsync<bool>(
+            await _executor.ExecuteAsync<bool>(
                 new RestRequest("gallery/{id}/vote/{vote}", Method.POST)
                     .AddUrlSegment("id", id)
                     .AddUrlSegment("vote", vote),
@@ -111,7 +111,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task Submit(string id, string title, bool terms)
         {
-            await _api.ExecuteAsync<bool>(
+            await _executor.ExecuteAsync<bool>(
                 new RestRequest("gallery/{id}", Method.POST)
                     .AddUrlSegment("id", id)
                     .AddParameter("title", title)

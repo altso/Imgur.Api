@@ -2,7 +2,7 @@
 
 namespace Imgur.Api.v3.Implementations
 {
-    public static class ErrorHelper
+    internal static class ErrorHelper
     {
         private const string AlbumNotFoundMessage = "No album was found with the ID";
 

@@ -7,23 +7,23 @@ namespace Imgur.Api.v3.Implementations
 {
     public class ImageEndpoint : IImageEndpoint
     {
-        private readonly IImgurApi _imgurApi;
+        private readonly IExecutor _executor;
 
-        public ImageEndpoint(IImgurApi imgurApi)
+        public ImageEndpoint(IExecutor executor)
         {
-            _imgurApi = imgurApi;
+            _executor = executor;
         }
 
         public Task<Image> Get(string id)
         {
-            return _imgurApi.ExecuteAsync<Image>(new RestRequest("image/{id}").AddUrlSegment("id", id), false);
+            return _executor.ExecuteAsync<Image>(new RestRequest("image/{id}").AddUrlSegment("id", id), false);
         }
 
         public Task Update(string id, string title, string description)
         {
             try
             {
-                return _imgurApi.ExecuteAsync<bool>(
+                return _executor.ExecuteAsync<bool>(
                     new RestRequest("image/{id}", Method.POST)
                         .AddUrlSegment("id", id)
                         .AddParameter("title", title)
@@ -41,7 +41,7 @@ namespace Imgur.Api.v3.Implementations
         {
             try
             {
-                return _imgurApi.ExecuteAsync<bool>(
+                return _executor.ExecuteAsync<bool>(
                     new RestRequest("image/{id}", Method.DELETE)
                         .AddUrlSegment("id", id),
                     false);
@@ -55,7 +55,7 @@ namespace Imgur.Api.v3.Implementations
 
         public Task<string> Favorite(string id)
         {
-            return _imgurApi.ExecuteAsync<string>(new RestRequest("image/{id}/favorite", Method.POST).AddUrlSegment("id", id), true);
+            return _executor.ExecuteAsync<string>(new RestRequest("image/{id}/favorite", Method.POST).AddUrlSegment("id", id), true);
         }
 
         public async Task<Image> Upload(Stream image, string albumId, string name, string title, string description, IProgress<double> progress)
@@ -69,7 +69,7 @@ namespace Imgur.Api.v3.Implementations
                     .AddParameter("type", "file")
                     .AddParameter("title", title)
                     .AddParameter("description", description);
-                var response = await _imgurApi.ExecuteAsync<Image>(request, false, progress);
+                var response = await _executor.ExecuteAsync<Image>(request, false, progress);
                 return response;
             }
             finally
@@ -81,13 +81,13 @@ namespace Imgur.Api.v3.Implementations
         private void IncrementVersion()
         {
             object version;
-            if (_imgurApi.State.TryGetValue("image", out version))
+            if (_executor.State.TryGetValue("image", out version))
             {
-                _imgurApi.State["image"] = Convert.ToInt32(version) + 1;
+                _executor.State["image"] = Convert.ToInt32(version) + 1;
             }
             else
             {
-                _imgurApi.State["image"] = 0;
+                _executor.State["image"] = 0;
             }
         }
     }

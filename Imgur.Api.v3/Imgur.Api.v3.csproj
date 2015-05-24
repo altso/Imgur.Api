@@ -40,6 +40,7 @@
     <Compile Include="IAccountEndpoint.cs" />
     <Compile Include="IAlbumEndpoint.cs" />
     <Compile Include="ICommentEndpoint.cs" />
+    <Compile Include="IExecutor.cs" />
     <Compile Include="IGalleryEndpoint.cs" />
     <Compile Include="IImageEndpoint.cs" />
     <Compile Include="IImgur.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="Implementations\GalleryAlbumOrImage.cs" />
     <Compile Include="Implementations\GalleryEndpoint.cs" />
     <Compile Include="Implementations\ImageEndpoint.cs" />
-    <Compile Include="Implementations\Imgur.cs" />
+    <Compile Include="Implementations\ImgurClient.cs" />
     <Compile Include="Implementations\ImgurApi.cs" />
     <Compile Include="Implementations\MessageEndpoint.cs" />
     <Compile Include="Implementations\NotificationEndpoint.cs" />

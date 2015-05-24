@@ -9,16 +9,16 @@ namespace Imgur.Api.v3.Implementations
 {
     public class MessageEndpoint : IMessageEndpoint
     {
-        private readonly IImgurApi _api;
+        private readonly IExecutor _executor;
 
-        public MessageEndpoint(IImgurApi api)
+        public MessageEndpoint(IExecutor executor)
         {
-            _api = api;
+            _executor = executor;
         }
 
         public async Task<IEnumerable<Message>> GetMessages()
         {
-            return await _api.ExecuteAsync<List<Message>>(
+            return await _executor.ExecuteAsync<List<Message>>(
                 new RestRequest("messages")
                     .AddParameter("_", Environment.TickCount)
                 , true);
@@ -26,7 +26,7 @@ namespace Imgur.Api.v3.Implementations
 
         public async Task<IEnumerable<Message>> GetMessageThread(int id)
         {
-            return await _api.ExecuteAsync<List<Message>>(
+            return await _executor.ExecuteAsync<List<Message>>(
                 new RestRequest("message/{id}/thread")
                     .AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture))
                     .AddParameter("_", Environment.TickCount)
@@ -35,7 +35,7 @@ namespace Imgur.Api.v3.Implementations
 
         public Task<Message> GetMessage(int id)
         {
-            return _api.ExecuteAsync<Message>(
+            return _executor.ExecuteAsync<Message>(
                 new RestRequest("message/{id}")
                     .AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture))
                 , true);
@@ -54,7 +54,7 @@ namespace Imgur.Api.v3.Implementations
             {
                 request = request.AddParameter("parent_id", parentId);
             }
-            var message = await _api.ExecuteAsync<Message>(request, true);
+            var message = await _executor.ExecuteAsync<Message>(request, true);
             return message.Id;
         }
     }
