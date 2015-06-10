@@ -25,7 +25,7 @@ namespace Imgur.Api.v3
 
     public enum GallerySort
     {
-        Viral, Time, Top
+        Viral, Time, Top, Rising
     }
 
     public enum GalleryWindow
