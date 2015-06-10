@@ -48,6 +48,9 @@ namespace Imgur.Api.v3
         public string Link { get; set; }
         public string Vote { get; set; }
         public bool Favorite { get; set; }
+        public string AccountUrl { get; set; }
+        public int CommentCount { get; set; }
+        public List<CommentItem> CommentPreview { get; set; }
     }
 
     public class Item : IDisplayable
@@ -144,7 +147,6 @@ namespace Imgur.Api.v3
         public string Gifv { get; set; }
         public string Mp4 { get; set; }
         public string Webm { get; set; }
-        public string AccountUrl { get; set; }
     }
 
     public class GalleryProfile
