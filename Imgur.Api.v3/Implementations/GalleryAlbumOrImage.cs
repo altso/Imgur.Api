@@ -6,7 +6,6 @@ namespace Imgur.Api.v3.Implementations
     {
         public List<Image> Images { get; set; }
         public int ImagesCount { get; set; }
-        public string AccountUrl { get; set; }
         public string Cover { get; set; }
         public string Type { get; set; }
         public bool Animated { get; set; }
@@ -33,6 +32,8 @@ namespace Imgur.Api.v3.Implementations
                 AccountUrl = AccountUrl,
                 Animated = Animated,
                 Bandwidth = Bandwidth,
+                CommentCount = CommentCount,
+                CommentPreview = CommentPreview,
                 Datetime = Datetime,
                 Description = Description,
                 Downs = Downs,
@@ -59,8 +60,11 @@ namespace Imgur.Api.v3.Implementations
         {
             return new GalleryAlbum
             {
+                AccountUrl = AccountUrl,
                 Images = Images,
                 ImagesCount = ImagesCount,
+                CommentCount = CommentCount,
+                CommentPreview = CommentPreview,
                 Bandwidth = Bandwidth,
                 Cover = Cover,
                 Datetime = Datetime,
