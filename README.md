@@ -15,4 +15,4 @@ It's a portable class library that targets:
 - Xamarin.iOS
 - Xamarin.iOS (Classic)
 
-Original code is part of [Grin](www.windowsphone.com/s?appid=1148ec57-6099-44c9-9389-59ce7abf35e8) app (Imgur client for Windows Phone) and uses RestSharp for making REST requests. This version of the library relies on HttpClient and Json.NET.
+Original code is part of [Grin](http://www.windowsphone.com/s?appid=1148ec57-6099-44c9-9389-59ce7abf35e8) app (Imgur client for Windows Phone) and uses RestSharp for making REST requests. This version of the library relies on HttpClient and Json.NET.
